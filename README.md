@@ -40,13 +40,13 @@
 
 返回值：成功是0，出错是-1；
 
-[示例](02_anonmymous_pipeline_communicate/pipe/process.c)
+[示例](02_anonymous_pipeline_communicate/pipe/process.c)
 
 注意：
 
 * 管道是创建在内存中的，进程结束，空间释放，管道就不存在了；
 * 管道中的东西，读完了就删除了：队列；
-* 如果管道中没有东西可读，则会阻塞；[示例](02_anonmymous_pipeline_communicate/block/process.c)
+* 如果管道中没有东西可读，则会阻塞；[示例](/02_anonymous_pipeline_communicate/block/process.c)
 
 无名管道的缺点：不能实现不是父子进程（亲缘关系）之间的通信。
 
