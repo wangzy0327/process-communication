@@ -83,9 +83,9 @@
 
 mkfifo
 
-mkfifo：用来创建管道文件的节点，没有在内核中创建管道。
+mkfifo：用来创建管道文件的节点，**没有在内核中创建管道**。
 
-只有通过open函数打开这个文件时才会在内核空间创建管道。
+只有通过**open函数**打开这个文件时**才**会在**内核**空间**创建管道**。
 
 函数形式：int mkfifo(const char* filename,mode_t mode);
 
@@ -95,9 +95,9 @@ mkfifo：用来创建管道文件的节点，没有在内核中创建管道。
 
 返回值：创建成功返回0，创建失败返回-1。
 
-作用：mkfifo 示例
+作用：mkfifo [示例](03_filename_pipeline_communicate/filename_pipe/process.c)
 
-通过有名管道可以实现无亲缘关系进程间通信。
+通过有名管道可以实现无亲缘关系进程间通信。[示例first](03_filename_pipeline_communicate/filename_parent_child/first/first.c) [示例second](03_filename_pipeline_communicate/filename_parent_child/second/second.c)
 
 ### 四：信号通信
 
