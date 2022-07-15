@@ -46,8 +46,8 @@
 
 * 管道是创建在内存中的，进程结束，空间释放，管道就不存在了；
 * 管道中的东西，读完了就删除了：队列；
-* 如果管道中没有东西可读，则会阻塞；[示例](/02_anonymous_pipeline_communicate/block/process.c)
+* 如果管道中没有东西可读，则会阻塞；[读阻塞示例](02_anonymous_pipeline_communicate/read_block/process.c)  [写阻塞示例](02_anonymous_pipeline_communicate/write_block/process.c)
 
-无名管道的缺点：不能实现不是父子进程（亲缘关系）之间的通信。
+无名管道的缺点：不能实现不是父子进程（亲缘关系）之间的通信。[示例](02_anonymous_pipeline_communicate/parent_child/process.c)
 
 ### 三：有名管道
