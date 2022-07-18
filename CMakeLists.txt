@@ -12,5 +12,6 @@ add_subdirectory(01_pthread_communicate)
 add_subdirectory(02_anonymous_pipeline_communicate)
 add_subdirectory(03_filename_pipeline_communicate)
 add_subdirectory(04_signal_communicate)
+add_subdirectory(05_ipc_share_mem_communicate)
 
 

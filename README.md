@@ -220,9 +220,79 @@ signal忽略信号处理 [示例](04_signal_communicate/signal/default/signal.c)
 
 signal处理父子进程通信 [示例](04_signal_communicate/signal/parent-child/signal.c)
 
-### 五：共享内存
+## IPC通信（Inter-Process Communication）
 
+IPC和文件I/O函数的比较
 
-### 六：消息队列
+| 文件I/O         | IPC                                        |
+| --------------- | ------------------------------------------ |
+| open            | msg_get<br />shm_get<br />sem_get          |
+| read<br />write | msgsnd msgrecv<br />shmat shmdt<br />semop |
+| close           | msgctrl<br />shmctrl<br />semctrl          |
 
-### 七：信号灯（信号量）
+ftok：创建IPC对象的key值  （默认使用 宏 IPC_PRIVATE是 只能实现带亲缘关系间进程的IPC通信）
+
+| 说明     | 使用                                                                           |
+| -------- | ------------------------------------------------------------------------------ |
+| 函数原型 | char ftok(const char* path,char key)                                           |
+| 函数参数 | 第一个参数：文件路径和文件名(需要提前创建)，否则报错<br />第二个参数：一个字符 |
+| 返回值   | 正确：返回一个key值<br />错误：返回-1                                          |
+
+查看IPC对象 -m 共享内存 -q 消息队列 -s 信号灯
+
+```shell
+ipcs -m | -q | -s
+```
+
+删除IPC对象
+
+```shell
+ipcrm -m | -q | -s  id
+```
+
+### 五：共享内存(IPC)
+
+打开或创建一个共享内存对象，共享内核在内核是什么样子的？
+
+一块缓存，类似于用户空间的数组或malloc函数分配的空间一样
+
+1）shmget 创建或打开一块共享内存
+
+| 说明       | 使用                                                                                                            |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| 所需头文件 | #include `<sys/types.h>`<br />#include `<sys/ipc.h>`<br />#include `<sys/shm.h>`                          |
+| 函数原型   | int shmget(Key_t key,int size,int shmflg);                                                                      |
+| 函数参数   | key：IPC_PRIVATE 或 ftok的返回值<br />size：共享内存区大小<br />shmflg：同open函数的权限位，也可以用8进制表示法 |
+| 函数返回   | 成功：共享内存段标识符——ID--文件描述符                                                                        |
+
+2）shmat 将共享内存映射到用户空间中
+
+能不能用read，write呢？ 
+
+为了方便用户空间对共享内存的操作，使用地址映射的方式
+
+| 说明     | 使用                                                                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 函数原型 | void *shmat(int shmid,const void *shmaddr,int shmflg);                                                                                     |
+| 函数参数 | shmid：ID号<br />const void* ：映射到的地址，NULL为系统自动完成的映射<br />shmflg ：SHM_RDONLY 共享内存只读；默认是0，表示共享内存可读写。 |
+| 返回值   | 成功：映射后的地址<br />失败：NULL                                                                                                         |
+
+3）shmdt：将进程里的地址映射删除 ，注意这里只是删除映射，并没有删除内核中的共享内存对象（通过ipcrm -m 删除）
+
+| 说明     | 使用                           |
+| -------- | ------------------------------ |
+| 函数原型 | int shmdt(const void* shmaddr) |
+| 函数参数 | shmaddr：共享内存映射后的地址  |
+| 返回值   | 成功：0<br />失败：-1          |
+
+[示例](05_ipc_share_mem_communicate/share-mem/share-mem.c)
+
+共享内存特点：
+
+共享内存创建之后，一直存在于内核中，知道被删除或系统关闭；
+
+共享内存和管道不一样，读取后，内容仍在其共享内存中。
+
+### 六：消息队列(IPC)
+
+### 七：信号灯（IPC 信号量）
