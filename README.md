@@ -305,7 +305,7 @@ ipcrm -m | -q | -s  id
 
 [共享内存父子进程通信示例](05_ipc_share_mem_communicate/share-mem-parent-child/share-mem.c) 
 
-共享内存非亲缘关系进程通信：A进程示例、B进程示例
+共享内存非亲缘关系进程通信：[客户端进程示例（读）](05_ipc_share_mem_communicate/share-mem-non-parent-child/share-mem-client.c)、[服务器进程示例（写）](05_ipc_share_mem_communicate/share-mem-non-parent-child/share-mem-server.c)
 
 ### 六：消息队列(IPC)
 
