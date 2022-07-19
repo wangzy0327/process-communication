@@ -267,7 +267,7 @@ ipcrm -m | -q | -s  id
 
 2）shmat 将共享内存映射到用户空间中
 
-能不能用read，write呢？ 
+能不能用read，write呢？
 
 为了方便用户空间对共享内存的操作，使用地址映射的方式
 
@@ -302,6 +302,10 @@ ipcrm -m | -q | -s  id
 共享内存创建之后，一直存在于内核中，知道被删除或系统关闭；
 
 共享内存和管道不一样，读取后，内容仍在其共享内存中。
+
+[共享内存父子进程通信示例](05_ipc_share_mem_communicate/share-mem-parent-child/share-mem.c) 
+
+共享内存非亲缘关系进程通信：A进程示例、B进程示例
 
 ### 六：消息队列(IPC)
 
