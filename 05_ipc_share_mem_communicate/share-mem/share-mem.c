@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-
+#include <string.h>   // memcpy
 
 
 int main(int argc,char* argv[]){
@@ -35,6 +35,16 @@ int main(int argc,char* argv[]){
     //extern int shmget (key_t __key, size_t __size, int __shmflg) __THROW;
     // key,字节数,权限 IPC_PRIVATE 默认生成的key为 0x00000000
     // int shmid = shmget(IPC_PRIVATE,128,0777);
+    /**
+     * @brief res
+     * 
+    create share memory success shmid = 0
+
+    ------ Shared Memory Segments --------
+    key        shmid      owner      perms      bytes      nattch     status      
+    0x00000000 0          wzy        777        128        0                     
+     * 
+     */
 
     int shmid = shmget(key,128,IPC_CREAT | 0777);
     if(shmid < 0){
@@ -74,17 +84,46 @@ int main(int argc,char* argv[]){
     
     // second read share memory data : hello linux
 
+    /* Detach shared memory segment.  */
+    // extern int shmdt (const void *__shmaddr) __THROW;
+    //参数时 共享内存 指针
+    //删除用户空间内存映射
+    printf("delete user namespace memory segment mapping\n");
+    shmdt(p);
+    //删除用户空间映射 再拷贝内容到地址中去会报错 段错误
+    // memcpy(p,"abcd",4);
+    //Segmentation fault (core dumped)
 
+    /* Shared memory control operation.  */
+    // extern int shmctl (int __shmid, int __cmd, struct shmid_ds *__buf) __THROW;
+    //IPC_RMID 删除共享内存
+    // shmctl(shmid,IPC_RMID,NULL);
+
+    system("ipcs -m ");
+    //发现创建的共享内存已经被删除了
     /**
-     * @brief res
+     * @brief result
      * 
-    create share memory success shmid = 0
+     * create key success key = 61060465
+    create share memory success shmid = 32768
 
     ------ Shared Memory Segments --------
     key        shmid      owner      perms      bytes      nattch     status      
-    0x00000000 0          wzy        777        128        0                     
+    0x61060465 32768      wzy        777        128        0                       
+
+    hello linux
+    share memory data : hello linux
+
+    second read share memory data : hello linux
+
+    delete user namespace memory segment mapping
+
+    ------ Shared Memory Segments --------
+    key        shmid      owner      perms      bytes      nattch     status
      * 
      */
+
+
     
     return 0;
 }

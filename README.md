@@ -228,7 +228,7 @@ IPC和文件I/O函数的比较
 | --------------- | ------------------------------------------ |
 | open            | msg_get<br />shm_get<br />sem_get          |
 | read<br />write | msgsnd msgrecv<br />shmat shmdt<br />semop |
-| close           | msgctrl<br />shmctrl<br />semctrl          |
+| close           | msgctl<br />shmctl<br />semctl             |
 
 ftok：创建IPC对象的key值  （默认使用 宏 IPC_PRIVATE是 只能实现带亲缘关系间进程的IPC通信）
 
@@ -286,6 +286,16 @@ ipcrm -m | -q | -s  id
 | 返回值   | 成功：0<br />失败：-1          |
 
 [示例](05_ipc_share_mem_communicate/share-mem/share-mem.c)
+
+4）shmctl：删除共享内存对象。（删除的是内核中的share memory）
+
+| 说明       | 使用                                                                                                                                                                |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 函数原型   | int shmctl(int shmid,int cmd,struct shmid_ds * buf);                                                                                                                |
+| 函数参数   | shmid：要操作的共享内存标识符。<br />cmd：IPC_STAT（获取对象属性）；IPC_SET（设置对象属性）；IPC_RMID（删除对象）<br />buf：指定IPC_STAT/IPC_SET时用以保存/设置属性 |
+| 函数返回值 | 成功：0<br />出错：-1                                                                                                                                               |
+
+[自实现my-ipcrm](05_ipc_share_mem_communicate/my-ipcrm/share-mem.c)  [自实现my-ipcs](05_ipc_share_mem_communicate/my-ipcs/share-mem.c)
 
 共享内存特点：
 
