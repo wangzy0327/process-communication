@@ -303,10 +303,64 @@ ipcrm -m | -q | -s  id
 
 共享内存和管道不一样，读取后，内容仍在其共享内存中。
 
-[共享内存父子进程通信示例](05_ipc_share_mem_communicate/share-mem-parent-child/share-mem.c) 
+[共享内存父子进程通信示例](05_ipc_share_mem_communicate/share-mem-parent-child/share-mem.c)
 
 共享内存非亲缘关系进程通信：[客户端进程示例（读）](05_ipc_share_mem_communicate/share-mem-non-parent-child/share-mem-client.c)、[服务器进程示例（写）](05_ipc_share_mem_communicate/share-mem-non-parent-child/share-mem-server.c)
 
 ### 六：消息队列(IPC)
+
+IPC队列是一种 链式队列
+
+msgid_ds 内核维护消息队列的结构体，队列的第一个消息指针msg_first，最后一个消息指针msg_last。消息中有一个成员指针next。
+
+每一个消息中包含有哪些内容：
+
+Data 数据
+
+Length 数据的长度
+
+Type 数据的类型
+
+![链式队列](imgs/ipc-queue.png "IPC队列")
+
+**消息的接收端可以根据消息的类型来接收 (与管道的区别)**
+
+1）msgget  创建消息队列
+
+| 说明       | 使用                                                                                   |
+| ---------- | -------------------------------------------------------------------------------------- |
+| 头文件     | #include `<sys/types.h>`<br />#include `<sys/ipc.h>`<br />#include `<sys/msg.h>` |
+| 函数原型   | int msgget(key_t key,int flag);                                                        |
+| 函数参数   | key：和消息队列关联的key值<br />flag：消息队列的访问权限                               |
+| 函数返回值 | 成功：消息队列ID<br />出错：-1                                                         |
+
+2）msgsnd  发送消息队列
+
+| 说明       | 使用                                                                                                                                                                                                                                                                                            |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 头文件     | #include `<sys/types.h>`<br />#include `<sys/ipc.h>`<br />#include `<sys/msg.h>`                                                                                                                                                                                                          |
+| 函数原型   | int msgsnd(int msgid,const void* msgp,size_t size,int flag);                                                                                                                                                                                                                                    |
+| 函数参数   | msgid：消息队列ID<br />msgp：指向消息的指针。常用消息结构msgbuf如下：<br />struct msgbuf{}<br />  long mtype;   //消息类型<br />  char mtext[N];  //消息正文<br />}<br />size：发送的消息正文的字节数<br />flag：IPC_NOWAIT  消息没有发送完成函数也会立即返回；0 ：直到发送完成函数才返回 |
+| 函数返回值 | 成功：0<br />出错：-1                                                                                                                                                                                                                                                                           |
+
+3）msgrcv 接收消息队列中的消息
+
+| 说明       | 使用                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 头文件     | #include `<sys/types.h>`<br />#include `<sys/ipc.h>`<br />#include `<sys/msg.h>`                                                                                                                                                                                                                                                                                |
+| 函数原型   | int msgrcv(int msgid,void* msgp,size_t size,long msgtype,int flag);                                                                                                                                                                                                                                                                                                   |
+| 函数参数   | msgid：消息队列ID<br />msgp：接收消息的缓冲区<br />size：要接收的消息的字节数<br />msgtype：0：接收消息队列中的第一个消息；<br />大于0：接收消息队列中第一个类型为msgtype的消息；<br />小于0：接收消息队列中类型值不大于msgtype的绝对值且类型值又最小的消息；<br />flag：0：若无消息函数会一直阻塞<br />          IPC_NOWAIT：若没有消息，进程会立即返回ENOMSG。 |
+| 函数返回值 | 成功：接收到消息的长度<br />出错：-1                                                                                                                                                                                                                                                                                                                                  |
+
+4）msgctl 删除消息队列
+
+| 说明       | 使用                                                                                                                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 头文件     | #include `<sys/types.h>`<br />#include `<sys/ipc.h>`<br />#include `<sys/msg.h>`                                                                                               |
+| 函数原型   | int msgctl(int msgqid,int cmd,struct msgid_ds* buf);                                                                                                                                 |
+| 函数参数   | msgid：消息队列的队列ID<br />cmd：IPC_STAT（获取对象属性，并将其保存在buf指向的缓存区中）；IPC_SET（设置对象属性。这个值取自buf参数）；IPC_RMID（删除对象）<br />buf：消息队列缓冲区 |
+| 函数返回值 | 成功：0<br />错误：-1                                                                                                                                                                |
+
+[消息队列基本操作示例](06_ipc_queue_communicate/message-queue/message-queue.c)
 
 ### 七：信号灯（IPC 信号量）
