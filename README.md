@@ -402,7 +402,7 @@ int semget(key_t key,int nsems,int semflg);
 | 函数参数   | key：和信号灯集关联的key值<br />nsems：信号灯集中包含的信号灯数目<br />semflg：信号灯集的访问权限 |
 | 函数返回值 | 成功：信号灯集ID<br />出错：-1                                                                    |
 
-int semctl(int semid,int semnum,int cmd, ...union semun arg(不是地址)));
+int semctl(int semid,int semnum,int cmd, ...union semun arg(不是地址));
 
 | 说明       | 使用                                                                                                                                               |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -411,5 +411,32 @@ int semctl(int semid,int semnum,int cmd, ...union semun arg(不是地址)));
 | 函数参数   | semid：信号灯集ID<br />semnum：要修改的信号灯编号<br />cmd：GETVAL（获取信号灯的值）、SETVAL（设置信号灯的值）、IPC_RMID（从系统中删除信号灯集合） |
 | 函数返回值 | 成功：0<br />出错：-1                                                                                                                              |
 
+```c
+union semun{
+    int val;  //SETVAL : 设置信号灯的值
+    struct semid_ds *buf;
+              //IPC_STAT (获取对象属性)
+              //IPC_SET（设置对象属性）
+    unsigned short * array; //
+    struct seminfo *__buf;  //Buffer for IPC
+}
+```
 
 [IPC信号量集示例](07_ipc_semaphore_communicate/semaphore-set/semaphore-set.c)
+
+int semop(int semid,struct sembuf *opsptr, size_t nops);
+
+[POSIX pthread信号量同步示例](07_ipc_semaphore_communicate/pthread-semaphore/thread.c)
+
+int semop(int semid,struct sembuf *opsptr, size_t nops);
+
+| 说明       | 使用                                                                                                                                                                                                                                                                                                        |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 所需头文件 | #include `<sys/types.h>`<br />#include `<sys/ipc.h>`<br />#include `<sys/sem.h>`                                                                                                                                                                                                                      |
+| 函数原型   | int semop(int semid,struct sembuf *opsptr, size_t nops);                                                                                                                                                                                                                                                    |
+| 函数参数   | semid：信号灯集ID<br />struct sembuf{<br />   short sem_num; //要操作的信号灯的编号<br />   short sem_op;  //0：等待，直到信号灯的值变为0 <br />   //1：释放资源，V操作<br />   //-1：分配资源，P操作<br />   short sem_flg;  //0，IPC_NOWAIT，SEM_UNDO<br />}<br />nops：要操作的信号灯的个数 |
+| 函数返回值 | 成功：0<br />出错：-1                                                                                                                                                                                                                                                                                       |
+
+[IPC信号灯集同步示例](07_ipc_semaphore_communicate/ipc-semaphore/semaphore.c)
+
+IPC信号灯集通信 ： [server示例](07_ipc_semaphore_communicate/semaphore-communicate/server.c)  [client示例](07_ipc_semaphore_communicate/semaphore-communicate/client.c)
