@@ -385,4 +385,31 @@ IPC消息队列单向通信 ：[客户端](06_ipc_queue_communicate/message-queu
 
 IPC消息队列双向通信（利用消息type和fork）：[客户端](06_ipc_queue_communicate/message-queue-two-way/mq-fork-client.c)、[服务端](06_ipc_queue_communicate/message-queue-two-way/mq-fork-server.c)
 
+IPC消息队列特点：可以完成创建一个IPC msg对象，通过消息数据类型来完成 针对同一个消息队列进行双向通信。而共享内存和有名管道如果只创建一个内核对象的话只能实现单向通信
+
 ### 七：信号灯（IPC 信号量）
+
+信号灯集合（可以包含多个信号灯） IPC对象是一个信号灯集（多个信号量），这点不同于pthread里面的semaphore
+
+所有的函数是对一个集合的操作：
+
+int semget(key_t key,int nsems,int semflg);
+
+| 说明       | 使用                                                                                              |
+| ---------- | ------------------------------------------------------------------------------------------------- |
+| 所需头文件 | #include `<sys/types.h>`<br />#include `<sys/ipc.h>`<br />#include `<sys/sem.h>`            |
+| 函数原型   | int semget(key_t key,int nsems,int semflg)                                                        |
+| 函数参数   | key：和信号灯集关联的key值<br />nsems：信号灯集中包含的信号灯数目<br />semflg：信号灯集的访问权限 |
+| 函数返回值 | 成功：信号灯集ID<br />出错：-1                                                                    |
+
+int semctl(int semid,int semnum,int cmd, ...union semun arg(不是地址)));
+
+| 说明       | 使用                                                                                                                                               |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 所需头文件 | #include `<sys/types.h>`<br />#include `<sys/ipc.h>`<br />#include `<sys/sem.h>`                                                             |
+| 函数原型   | int semctl(int semid,int semnum,int cmd, ...union semun arg(不是地址)));                                                                           |
+| 函数参数   | semid：信号灯集ID<br />semnum：要修改的信号灯编号<br />cmd：GETVAL（获取信号灯的值）、SETVAL（设置信号灯的值）、IPC_RMID（从系统中删除信号灯集合） |
+| 函数返回值 | 成功：0<br />出错：-1                                                                                                                              |
+
+
+[IPC信号量集示例](07_ipc_semaphore_communicate/semaphore-set/semaphore-set.c)
