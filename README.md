@@ -34,7 +34,7 @@
 
 函数形式：int open(const char *__path, int __oflag,mode_t mode)
 
-功能：创建普通文件，为系统调用；
+功能：创建普通文件，为系统调用；unistd.h
 
 参数：文件名，文件访问模式，文件访问权限
 
@@ -51,6 +51,24 @@
 参数：就是得到的文件描述符。可见有两个文件描述符：fd[0]和fd[1]，管道有一个读端fd[0]用来读和一个写端fd[1]用来写，这个规定不能变。
 
 返回值：成功是0，出错是-1；
+
+extern ssize_t read (int__fd, void *__buf, size_t __nbytes) __wur;
+
+| 说明     | 使用                                                                                                |
+| -------- | --------------------------------------------------------------------------------------------------- |
+| 头文件   | #include<unistd.h>                                                                                  |
+| 函数形式 | long read (int__fd, void *__buf, size_t __nbytes) __wur                                             |
+| 参数     | read NBYTES into BUF from FD.<br />fd：文件描述符<br />__buf：缓存指针<br />_nbytes：读取缓存字节数 |
+| 返回值   | 成功：读取的字节数<br />失败：-1<br />0：结束                                                       |
+
+extern ssize_t write (int__fd, const void *__buf, size_t __n) __wur;
+
+| 说明     | 使用                                                                                             |
+| -------- | ------------------------------------------------------------------------------------------------ |
+| 头文件   | #include<unistd.h>                                                                               |
+| 函数形式 | long write (int__fd, const void *__buf, size_t __n) __wur                                        |
+| 参数     | Write N bytes of BUF to FD<br />fd：文件描述符<br />__buf：缓存指针<br />_nbytes：读取缓存字节数 |
+| 返回值   | 成功：写入的字节数<br />失败：-1                                                                 |
 
 [示例](02_anonymous_pipeline_communicate/pipe/process.c)
 
@@ -362,5 +380,9 @@ Type 数据的类型
 | 函数返回值 | 成功：0<br />错误：-1                                                                                                                                                                |
 
 [消息队列基本操作示例](06_ipc_queue_communicate/message-queue/message-queue.c)
+
+IPC消息队列单向通信 ：[客户端](06_ipc_queue_communicate/message-queue-one-way/mq-client.c)、[服务端](06_ipc_queue_communicate/message-queue-one-way/mq-server.c)
+
+IPC消息队列双向通信（利用消息type和fork）：[客户端](06_ipc_queue_communicate/message-queue-two-way/mq-fork-client.c)、[服务端](06_ipc_queue_communicate/message-queue-two-way/mq-fork-server.c)
 
 ### 七：信号灯（IPC 信号量）
